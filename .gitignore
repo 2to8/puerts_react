@@ -60,4 +60,9 @@ crashlytics-build.properties
 
 Packages
 *.history
-Js/node_modules
+
+node_modules
+/build
+.cache
+
+TsProj/output

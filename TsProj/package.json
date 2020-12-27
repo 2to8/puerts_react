@@ -4,6 +4,9 @@
   "description": "ts project",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "postbuild": "node copyJsFile.js output ../Assets/Examples/05_Typescript/Resources"
+    "postbuild": "node copyJsFile.js output ../Assets/Js/Puerts/Examples/05_Typescript/Resources"
+  },
+  "devDependencies": {
+    "typescript": "^4.1.3"
   }
 }

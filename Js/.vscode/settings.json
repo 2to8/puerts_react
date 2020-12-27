@@ -9,6 +9,7 @@
         "**/ReleasePkg": true,
         "**/Temp": true,
         "**/.history":true,
+        ".cache": true,
     },
     "files.exclude": {
         "**/*.csproj": true,
@@ -22,7 +23,8 @@
         "**/Temp": true,
         "**/.idea": true,
         "**/.vs": true,
-        "**/.history": true
+        "**/.history": true,
+        ".cache": true
     },
     "files.watcherExclude": {
         "**/target": true
