@@ -62,7 +62,7 @@ Packages
 *.history
 
 node_modules
-/build
+build
 .cache
 
 TsProj/output
