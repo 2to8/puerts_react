@@ -10,7 +10,7 @@
       "../Assets/Js/Puerts/Gen/Typing",
       "./node_modules/@types"
     ],
-    "outDir": "output",
+    "outDir": "build",
     "allowJs": true,
   }
 }

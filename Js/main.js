@@ -1,14 +1,21 @@
 import { UnityEngine } from 'csharp'
 
+import React from 'react';
+
+
 UnityEngine.Debug.Log('hello world');
+
 let gameObject = new UnityEngine.GameObject("testobject");
 console.log(gameObject.name);
 gameObject.transform.position = new UnityEngine.Vector3(1, 2, 3);
 
+console.log(React);
 
-// const CS = require('csharp');
+console.log(React);
 
-// import './src/index.js'
+console.log(React);
 
-// let gameObject = new CS.UnityEngine.GameObject('new GameObject');
-// CS.UnityEngine.Debug.Log(gameObject.name);
+// var CS = require('csharp')
+
+
+

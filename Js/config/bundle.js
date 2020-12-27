@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 // 单个入口文件路径
-const entryFiles = path.join(__dirname, '../src/main.js');
+const entryFiles = path.join(__dirname, '../main.js');
 
 var isBuild = false;
 var args = process.argv;
@@ -27,8 +27,8 @@ const options = {
     global: 'moduleName', // 在当前名字模块以UMD模式导出，默认禁止。
     minify: isBuild, // 压缩文件，当 process.env.NODE_ENV === 'production' 时，会启用
     scopeHoist: false, // 打开实验性的scope hoisting/tree shaking用来缩小生产环境的包。
-    target: 'browser', // browser/node/electron, 默认为 browser
-    bundleNodeModules: false, // 当package.json的'target'设置'node' or 'electron'时，相应的依赖不会加入bundle中。设置true将被包含。
+    target: 'node', // browser/node/electron, 默认为 browser
+    bundleNodeModules: true, // 当package.json的'target'设置'node' or 'electron'时，相应的依赖不会加入bundle中。设置true将被包含。
     sourceMaps: !isBuild, // 启用或禁用 sourcemaps，默认为启用(在精简版本中不支持)
     // https: { // 设置true自动定义一对密钥和证书，false取消变成http
     //     cert: './ssl/c.crt', // 自定义证书路径
@@ -72,6 +72,27 @@ async function build() {
     // 一旦 parcel 完成打包，会调用 bundled，主 bundle 会作为参数传递到该 callback
     bundler.on('bundled', (bundler) => {
         // bundler 包含所有资源和 bundle，如需了解更多请查看文档
+        if (options.sourceMaps) { // 如果打包了sourceMaps
+            let mainPath = bundler.name;
+            if (fs.existsSync(mainPath)) {
+                let data = fs.readFileSync(mainPath, "utf-8");
+                let lines = data.split('\n');
+                if (lines.length > 0) {
+                    let last = lines[lines.length - 1];
+                    last = "//# sourceMappingURL=" + options.outFile + ".map";
+                    lines[lines.length - 1] = last;
+                    data = "";
+                    for (let index = 0; index < lines.length; index++) {
+                        const element = lines[index];
+                        data += element;
+                        if (index != lines.length - 1) {
+                            data += "\n"
+                        }
+                    }
+                }
+                fs.writeFileSync(mainPath, data);
+            }
+        }
     });
     // 每次构建结束后，都会调用 buildEnd，即使发生错误它也仍然会被触发
     bundler.on('buildEnd', () => {
