@@ -12,5 +12,8 @@
     ],
     "outDir": "build",
     "allowJs": true,
-  }
+  },
+  "exclude": [
+    "./config"
+  ]
 }

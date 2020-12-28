@@ -2,7 +2,7 @@
   "name": "js",
   "version": "1.0.0",
   "scripts": {
-    "dev": "node config/ncc.js",
+    "dev": "node config/build.js",
     "debug-build": "npm run dev",
     "build": "node config/ncc.js -build",
     "tsbuild": "tsc -p tsconfig.json"

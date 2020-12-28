@@ -1,3 +1,6 @@
+// "build": "node config/ncc.js -build",
+// "tsbuild": "tsc -p tsconfig.json"
+
 // https://www.npmjs.com/package/@vercel/ncc
 const ncc = require('@vercel/ncc');
 const utils = require('./build_utils');
