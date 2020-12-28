@@ -10,7 +10,7 @@
             "name": "Launch",
             "protocol": "inspector",
             "port": 8080,
-            "preLaunchTask": "build"
+            // "preLaunchTask": "build"
         }
     ]
 }

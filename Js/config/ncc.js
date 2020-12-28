@@ -31,10 +31,10 @@ let option = {
 
 function build() {
     ncc(inputPath, option).then(({ code, map, assets }) => {
-
         utils.clearDir(outputPath);
+        utils.createDir(outputPath);
 
-        let fileName = path.basename(inputPath);
+        let fileName = "index.js"; //path.basename(inputPath);
 
         let outputJsPath = path.join(outputPath, fileName);
         fs.writeFileSync(outputJsPath, code);
@@ -45,7 +45,9 @@ function build() {
         }
         for (const key in assets) {
             const element = assets[key];
-            console.log(key, element);
+            let assetPath = path.join(outputPath, key);
+            console.log(typeof (element.source));
+            fs.writeFileSync(assetPath, element.source);
         }
         // console.log(assets);
 

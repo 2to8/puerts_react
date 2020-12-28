@@ -17,6 +17,7 @@ utils.clearDir = function (path) {
     console.log("clear path : " + path)
     let files = [];
     if (fs.existsSync(path)) {
+        if (!fs.statSync(path).isDirectory()) return;
         files = fs.readdirSync(path);
         files.forEach((file, index) => {
             let curPath = path + "/" + file;
@@ -26,6 +27,12 @@ utils.clearDir = function (path) {
                 fs.unlinkSync(curPath); //删除文件
             }
         });
+    }
+}
+
+utils.createDir = function (path) {
+    if (!fs.existsSync(path) || !fs.statSync(path).isDirectory()) {
+        fs.mkdirSync(path);
     }
 }
 

@@ -90,12 +90,12 @@ obj.Extension2(obj1);
 
 
 //typescript和c#的async，await联动，为了不在低版本的Unity下报错，先注释，c#7.3以上版本可以打开这些注释
-/*async function asyncCall() {
-    let task = obj.GetFileLength("Assets/Examples/05_Typescript/TsQuickStart.cs");
-    let result = await $promise(task);
+async function asyncCall() {
+    //let task = obj.GetFileLength("Assets/Examples/05_Typescript/TsQuickStart.cs");
+    let result = await $promise(null);
     console.log('file length is ' + result);
-    let task2 = obj.GetFileLength("notexistedfile");//这个会抛文件找不到异常，被catch
-    let result2 = await $promise(task2);
+    //let task2 = obj.GetFileLength("notexistedfile");//这个会抛文件找不到异常，被catch
+    let result2 = await $promise(null);
     console.log('file length is ,' + result2);
 }
-asyncCall().catch(e => console.error("catch:" + e));*/
+asyncCall().catch(e => console.error("catch:" + e));
