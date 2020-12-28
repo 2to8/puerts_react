@@ -1,0 +1,61 @@
+// https://www.npmjs.com/package/@vercel/ncc
+const ncc = require('@vercel/ncc');
+const utils = require('./build_utils');
+const path = require('path');
+const fs = require('fs');
+
+var inputPath = path.join(__dirname, '../main.js');
+var outputPath = path.join(__dirname, '../build');
+
+var isBuild = utils.isArg('-build');
+
+let option = {
+    // 提供自定义缓存路径或禁用缓存
+    cache: ".cache" | false,
+    // externals to leave as requires of the build
+    externals: ["externalpackage"],
+    // directory outside of which never to emit assets
+    filterAssetBase: process.cwd(), // default
+    minify: isBuild, // default false
+    sourceMap: !isBuild, // default false
+    sourceMapBasePrefix: '../', // default treats sources as output-relative
+    // when outputting a sourcemap, automatically include
+    // source-map-support in the output file (increases output by 32kB).
+    sourceMapRegister: true, // default
+    watch: false, // default
+    license: '', // default does not generate a license file
+    v8cache: false, // default
+    quiet: false, // default
+    debugLog: false // default
+}
+
+function build() {
+    ncc(inputPath, option).then(({ code, map, assets }) => {
+
+        utils.clearDir(outputPath);
+
+        let fileName = path.basename(inputPath);
+
+        let outputJsPath = path.join(outputPath, fileName);
+        fs.writeFileSync(outputJsPath, code);
+
+        if (option.sourceMap) {
+            let outputSourceMapPath = path.join(outputPath, fileName + ".map");
+            fs.writeFileSync(outputSourceMapPath, map);
+        }
+        for (const key in assets) {
+            const element = assets[key];
+            console.log(key, element);
+        }
+        // console.log(assets);
+
+        console.log("build success : " + outputJsPath);
+        // console.log(code);
+        // Assets is an object of asset file names to { source, permissions, symlinks }
+        // expected relative to the output code (if any)
+    }).catch(function (error) {
+        console.log(error);
+    });
+}
+
+build();

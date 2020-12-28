@@ -7,13 +7,14 @@ using UnityEngine;
 
 public class JsEnvManager : MonoBehaviour
 {
+    public string jsPath = "G:/Unity/Git/puerts_react/Js/build";
     private JsEnv jsEnv;
 #if START_DEBUG
     async
 #endif
     private void Start()
     {
-        jsEnv = new JsEnv(new JsEnvLoader("G:/Unity/Git/puerts_react/Js/build"), 8080);
+        jsEnv = new JsEnv(new JsEnvLoader(jsPath), 8080);
 #if START_DEBUG
         Debug.Log("等待连接调试...");
         await jsEnv.WaitDebuggerAsync();

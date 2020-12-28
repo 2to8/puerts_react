@@ -237,3 +237,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1475f22f7c0ac9d4aa4a5e82dcf72611, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jsPath: E:\Guo\Git\puerts_react\Js\build
