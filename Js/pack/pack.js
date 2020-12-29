@@ -4,22 +4,25 @@ const path = require('path');
 const parser = require('@babel/parser');  // 解析ast
 const traverse = require('@babel/traverse').default; // 遍历ast
 const babel = require('@babel/core');
+const presetEnv = require('@babel/preset-env');
 
 const utils = require('./pack_utils');
 const config = require('./pack_config');
 
-var srcPath = path.join(__dirname, config.srcPath);
+var srcPath = config.srcPath;
 var mainPath = path.join(srcPath, config.mainPath);
-var outputPath = path.join(__dirname, config.outputPath);
+var outputPath = config.outputPath;
+const presetEnvPlugin = [presetEnv, config.presetEnvOption]
 
 let ID = 0;
 
 function createAsset(filename) {
-    if (!fs.existsSync(filename)) {
-        console.log(filename + " notfound");
+    const filepath = path.join(__dirname, filename);
+    if (!fs.existsSync(filepath)) {
+        console.log(filepath + " notfound");
         return;
     }
-    const content = fs.readFileSync(filename, 'utf-8');
+    const content = fs.readFileSync(filepath, 'utf-8');
     const ast = parser.parse(content, {  // 解析出抽象语法树
         sourceType: 'module',
     });
@@ -29,11 +32,11 @@ function createAsset(filename) {
             dependencies.push(node.source.value);
         }
     });
-    const option = {
-
-    }
-    const { code } = babel.transformFromAstSync(ast, null, {  // 转换ast代码
-        presets: ['@babel/preset-env'],
+    const { code, map } = babel.transformFromAstSync(ast, null, {  // 转换ast代码
+        presets: [presetEnvPlugin],
+        sourceMaps: true,
+        sourceRoot: '',
+        // sourceFileName: path.basename(filename),
         // plugins: []
     })
     let id = ID++;
@@ -41,12 +44,14 @@ function createAsset(filename) {
         id,
         filename,
         code,
+        map,
         dependencies,
     }
 }
 
 function createGraph(entry) {
     const mainAsset = createAsset(entry);
+    if (!mainAsset) return;
     const queue = [mainAsset];
     for (const asset of queue) {
         const dirname = path.dirname(asset.filename);
@@ -63,29 +68,15 @@ function createGraph(entry) {
     return queue;
 }
 
-function bundleOne(mod) {
-    const result = {};
-    result.code = mod.code;
-    return result;
-}
-
-function bundle(entry) {
+function pack(entry) {
     const graph = createGraph(entry);
+    if (!graph) return;
     let modules = [];
     graph.forEach(mod => {
-        const module = bundleOne(mod);
-        if (module) {
-            modules.push(module);
-        }
+        console.log(mod);
     });
-    const result = modules;
-    return result;
+
+    console.log('------------ success ------------');
 }
 
-function build(entry) {
-    const data = bundle(entry);
-
-    console.log(data);
-}
-
-build(mainPath);
+pack(mainPath);
