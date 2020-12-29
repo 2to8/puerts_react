@@ -2,9 +2,9 @@
   "name": "js",
   "version": "1.0.0",
   "scripts": {
-    "dev": "node config/build.js",
-    "debug-build": "npm run dev",
-    "build": "node config/ncc.js -build",
+    "pack": "node pack/pack.js",
+    "debug-build": "npm run pack",
+    "build": "node pack/ncc.js -build",
     "tsbuild": "tsc -p tsconfig.json"
   },
   "dependencies": {
@@ -12,6 +12,10 @@
     "react-reconciler": "^0.26.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/parser": "^7.12.11",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/traverse": "^7.12.12",
     "@types/react": "^17.0.0",
     "@types/react-reconciler": "^0.18.0",
     "@vercel/ncc": "^0.26.1",

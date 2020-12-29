@@ -3,12 +3,14 @@
 
 // https://www.npmjs.com/package/@vercel/ncc
 const ncc = require('@vercel/ncc');
-const utils = require('./build_utils');
+const utils = require('./pack_utils');
 const path = require('path');
 const fs = require('fs');
+const config = require('./pack_config');
 
-var inputPath = path.join(__dirname, '../main.js');
-var outputPath = path.join(__dirname, '../build');
+
+var inputPath = path.join(__dirname, config.srcPath, config.mainPath);
+var outputPath = path.join(__dirname, config.outputPath);
 
 var isBuild = utils.isArg('-build');
 

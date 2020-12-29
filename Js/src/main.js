@@ -12,9 +12,19 @@ gameObject.transform.position = new UnityEngine.Vector3(1, 2, 3);
 
 console.log(React);
 
-console.log(React);
+async function asyncFun2() {
+    return 0;
+}
 
-console.log(React);
+async function asyncFun() {
+    const a = await asyncFun2();
+    console.log(a);
+}
+
+class AAA {
+
+}
+
 
 // var CS = require('csharp')
 
