@@ -9,7 +9,8 @@ const config = require('./pack_config');
 
 const presetEnvPlugin = [presetEnv, config.presetEnvOption]
 
-const isDev = !utils.isArg('-build');
+const isDev = !utils.isArg('-build'); // 是否是开发环境打包
+const isNode = !utils.isArg('-nonode'); // 是否打包nodemodule
 
 function getSourceMapRelativeCodePath(filename) {
     let inputPath = getInputCodeAbsPath(filename);
@@ -49,13 +50,6 @@ function createAsset(filename) {
     return { filename, code, map };
 }
 
-const codeExts = [
-    '.js',
-    '.jsx',
-    '.ts',
-    '.tsx',
-]
-
 function createFile(filePath, content) {
     const dir = path.dirname(filePath);
     utils.createDir(dir);
@@ -69,28 +63,40 @@ function copyFile(filePath, toPath) {
 
 // 打包
 function pack() {
+    console.log('\n------------ start generate code : ------------\n');
     const outputFolder = path.join(__dirname, config.outputPath);
     const inputFolder = path.join(__dirname, config.rootPath);
-    utils.clearDir(outputFolder);
+    utils.clearDir(outputFolder, isNode ? null : ['node_modules']);
     utils.createDir(outputFolder);
+    let codeCount = 0;
+    let copyCount = 0;
     utils.forEachDir(inputFolder, false, config.ignoreNames, file => {
         let ext = path.extname(file);
-        if (codeExts.indexOf(ext) >= 0) {
+        if (config.codeExtension.indexOf(ext) >= 0) {
             const asset = createAsset(file);
             createFile(getOutputCodeAbsPath(asset.filename), asset.code);
             if (isDev) {
                 createFile(getSourceMapAbsPath(asset.filename), JSON.stringify(asset.map));
             }
+            codeCount++;
         } else {
             copyFile(path.join(inputFolder, file), path.join(outputFolder, file));
+            copyCount++;
         }
     });
-    console.log('------------ generate code success ! ------------');
-    // npm install --production
-    utils.runCmd('npm install --production', outputFolder);
+    console.log('------------ generate code success !  code : ' + codeCount + ', copy : ' + copyCount + ' ------------\n');
+
+    if (isNode) {
+        console.log('------------ start install npm dependent : ------------\n');
+        // npm install --production
+        utils.runCmd('npm install --production', outputFolder);
+        console.log('\n------------ install npm dependent success ! ------------\n');
+    }
+
     if (!isDev) {
-        let delFolders = ['node_module/.bin'];
-        let delFiles = ['package.json', 'package-lock.json', 'tsconfig.json'];
+        // console.log('------------ clear build temp : ------------\n');
+        const delFolders = config.delFolders;
+        let delFiles = config.delFiles;
         for (let i = 0; i < delFolders.length; i++) {
             utils.delDir(path.join(outputFolder, delFolders[i]));
         }
@@ -100,8 +106,9 @@ function pack() {
                 fs.unlinkSync(file);
             }
         }
+        // console.log('------------ clear build temp success ! ------------\n');
     }
-    console.log('------------ pack success ! ------------');
+    console.log('------------ pack success ! ------------\n');
 }
 
 pack()

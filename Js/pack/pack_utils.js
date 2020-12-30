@@ -15,14 +15,17 @@ utils.isArg = function (argName) {
     return false;
 }
 
-utils.clearDir = function (path) {
-    console.log("clear path : " + path)
+utils.clearDir = function (path, ignoreNames) {
+    // console.log("clear path : " + path)
     let files = [];
     if (fs.existsSync(path)) {
         if (!fs.statSync(path).isDirectory()) return;
         files = fs.readdirSync(path);
         files.forEach((file, index) => {
-            let curPath = path + "/" + file;
+            if (ignoreNames != null && ignoreNames.indexOf(file) >= 0) {
+                return;
+            }
+            let curPath = nodepath.join(path, file);
             if (fs.statSync(curPath).isDirectory()) {
                 utils.delDir(curPath); //递归删除文件夹
             } else {
@@ -80,7 +83,7 @@ utils.delDir = function (path) {
 }
 
 utils.runCmd = function (cmd, path) {
-    console.log(path);
+    // console.log(path);
     let currentPath = __dirname;
     shell.cd(path)
     shell.exec(cmd);

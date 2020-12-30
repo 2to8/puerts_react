@@ -2,7 +2,7 @@
   "name": "js",
   "version": "1.0.0",
   "scripts": {
-    "debug-build": "npm run pack",
+    "debug-build": "node pack/pack.js -nonode",
     "pack": "node pack/pack.js",
     "build": "node pack/pack.js -build",
     "tsbuild": "tsc -p tsconfig.json",
