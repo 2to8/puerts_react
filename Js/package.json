@@ -2,10 +2,11 @@
   "name": "js",
   "version": "1.0.0",
   "scripts": {
-    "pack": "node pack/pack.js",
     "debug-build": "npm run pack",
-    "build": "node pack/ncc.js -build",
-    "tsbuild": "tsc -p tsconfig.json"
+    "pack": "set NODE_ENV=development&&node pack/pack.js",
+    "build": "set NODE_ENV=production&&node pack/pack.js",
+    "tsbuild": "tsc -p tsconfig.json",
+    "npm-p": "npm install --production"
   },
   "dependencies": {
     "react": "^17.0.1",

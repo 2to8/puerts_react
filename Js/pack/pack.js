@@ -12,6 +12,8 @@ var mainPath = path.join(srcPath, config.mainPath);
 var outputPath = path.join(__dirname, config.outputPath);
 const presetEnvPlugin = [presetEnv, config.presetEnvOption]
 
+console.log(process.env.NODE_ENV);
+
 function createAsset(filename) {
     const filepath = path.join(__dirname, filename);
     if (!fs.existsSync(filepath)) {
@@ -34,7 +36,7 @@ function pack(entry) {
     utils.createDir(outputPath);
     const asset = createAsset(entry);
     console.log(asset);
-
+    console.log(result);
     console.log('------------ success ------------');
 }
 

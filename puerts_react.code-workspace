@@ -8,5 +8,9 @@
 			"path": "Js"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.watcherExclude": {
+			"**/target": true
+		}
+	}
 }

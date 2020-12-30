@@ -1,6 +1,7 @@
 var utils = {};
 
 const fs = require('fs');
+const exec = require('child_process').exec;
 
 utils.isArg = function (argName) {
     var args = process.argv;
@@ -51,5 +52,16 @@ utils.delDir = function (path) {
         fs.rmdirSync(path);
     }
 }
+
+utils.runCmd = function (cmd, path, callback) {
+    exec(cmd, { cmd: path }, (err, stdout, stderr) => {
+        if (err || stderr) {
+            callback(null, err ? err : stderr);
+        } else {
+            callback(stdout, null);
+        }
+    });
+}
+
 
 module.exports = utils;
