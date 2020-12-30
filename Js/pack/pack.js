@@ -88,6 +88,19 @@ function pack() {
     console.log('------------ generate code success ! ------------');
     // npm install --production
     utils.runCmd('npm install --production', outputFolder);
+    if (!isDev) {
+        let delFolders = ['node_module/.bin'];
+        let delFiles = ['package.json', 'package-lock.json', 'tsconfig.json'];
+        for (let i = 0; i < delFolders.length; i++) {
+            utils.delDir(path.join(outputFolder, delFolders[i]));
+        }
+        for (let i = 0; i < delFiles.length; i++) {
+            const file = path.join(outputFolder, delFiles[i]);
+            if (fs.existsSync(file) && fs.statSync(file).isFile()) {
+                fs.unlinkSync(file);
+            }
+        }
+    }
     console.log('------------ pack success ! ------------');
 }
 
