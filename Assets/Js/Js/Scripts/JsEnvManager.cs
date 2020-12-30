@@ -20,7 +20,7 @@ public class JsEnvManager : MonoBehaviour
         await jsEnv.WaitDebuggerAsync();
         Debug.Log("成功连接！");
 #endif
-        jsEnv.Eval(@"require('main')");
+        jsEnv.Eval(@"require('./src/main')");
     }
     private void Update()
     {

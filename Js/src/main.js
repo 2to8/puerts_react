@@ -12,21 +12,9 @@ gameObject.transform.position = new UnityEngine.Vector3(1, 2, 3);
 
 console.log(React);
 
-async function asyncFun2() {
-    return 0;
-}
+var element = React.createElement('div', { className: 'shopping-list' },
+    React.createElement('h1', /* ... h1 children ... */),
+    React.createElement('ul', /* ... ul children ... */)
+);
 
-async function asyncFun() {
-    const a = await asyncFun2();
-    console.log(a);
-}
-
-class AAA {
-
-}
-
-
-// var CS = require('csharp')
-
-
-
+console.log(element);

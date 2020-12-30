@@ -1,8 +1,12 @@
 
 var config = {
-    srcPath: '../src',
-    mainPath: 'main.js', // 入口文件
+    rootPath: '../',
     outputPath: '../build', // 输出路径
+    ignoreNames: [
+        'pack',
+        'node_modules',
+        'build',
+    ],
     presetEnvOption: {
         targets: {
             node: "10",

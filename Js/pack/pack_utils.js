@@ -1,7 +1,8 @@
 var utils = {};
 
 const fs = require('fs');
-const exec = require('child_process').exec;
+const shell = require('shelljs')
+const nodepath = require('path');
 
 utils.isArg = function (argName) {
     var args = process.argv;
@@ -23,7 +24,7 @@ utils.clearDir = function (path) {
         files.forEach((file, index) => {
             let curPath = path + "/" + file;
             if (fs.statSync(curPath).isDirectory()) {
-                delDir(curPath); //递归删除文件夹
+                utils.delDir(curPath); //递归删除文件夹
             } else {
                 fs.unlinkSync(curPath); //删除文件
             }
@@ -37,6 +38,31 @@ utils.createDir = function (path) {
     }
 }
 
+utils.forEachDir = function (path, isAbs, ignoreNames, callback) {
+    function localForEachDir(path, ignoreNames, callback, currentRoot) {
+        if (fs.existsSync(path)) {
+            const files = fs.readdirSync(path);
+            files.forEach((file, index) => {
+                if (file[0] == '.') {
+                    // console.log("忽略 " + file);
+                    return;
+                }
+                if (currentRoot == '' && ignoreNames.indexOf(file) >= 0) {
+                    return;
+                }
+                let curPath = nodepath.join(path, file);
+                let rootPath = nodepath.join(currentRoot, file);
+                if (fs.statSync(curPath).isDirectory()) {
+                    localForEachDir(curPath, ignoreNames, callback, rootPath);
+                } else {
+                    callback(isAbs ? curPath : rootPath);
+                }
+            });
+        }
+    }
+    localForEachDir(path, ignoreNames, callback, '');
+}
+
 utils.delDir = function (path) {
     let files = [];
     if (fs.existsSync(path)) {
@@ -44,7 +70,7 @@ utils.delDir = function (path) {
         files.forEach((file, index) => {
             let curPath = path + "/" + file;
             if (fs.statSync(curPath).isDirectory()) {
-                delDir(curPath); //递归删除文件夹
+                utils.delDir(curPath); //递归删除文件夹
             } else {
                 fs.unlinkSync(curPath); //删除文件
             }
@@ -53,14 +79,19 @@ utils.delDir = function (path) {
     }
 }
 
-utils.runCmd = function (cmd, path, callback) {
-    exec(cmd, { cmd: path }, (err, stdout, stderr) => {
-        if (err || stderr) {
-            callback(null, err ? err : stderr);
-        } else {
-            callback(stdout, null);
-        }
-    });
+utils.runCmd = function (cmd, path) {
+    console.log(path);
+    let currentPath = __dirname;
+    shell.cd(path)
+    shell.exec(cmd);
+    shell.cd(currentPath);
+    // exec(cmd, { cmd: path }, (err, stdout, stderr) => {
+    //     if (err || stderr) {
+    //         callback(null, err ? err : stderr);
+    //     } else {
+    //         callback(stdout, null);
+    //     }
+    // });
 }
 
 
