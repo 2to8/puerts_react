@@ -3,7 +3,6 @@ import * as CS from 'csharp'
 
 import * as React from 'react';
 
-
 CS.UnityEngine.Debug.Log('hello world');
 
 let gameObject = new CS.UnityEngine.GameObject("testobject");

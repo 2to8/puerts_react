@@ -2,7 +2,12 @@
 
 import { UnityEngine, PuertsTest, System } from 'csharp'
 import { $ref, $unref, $generic, $promise, $typeof } from 'puerts'
+
+import * as CS from 'csharp';
+
 import './ExtensionDecl'
+
+CS.UnityEngine.Debug.Log('hello world');
 
 //静态函数
 UnityEngine.Debug.Log('hello world');
