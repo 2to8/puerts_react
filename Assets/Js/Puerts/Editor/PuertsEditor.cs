@@ -7,7 +7,7 @@ using UnityEngine;
 public class PuertsEditor
 {
     /// <summary> 要生成的路径 </summary>
-    public static string DataPath { get { return Application.dataPath + "Js/Puerts"; } }
+    public static string DataPath { get { return Application.dataPath + "/Js/Puerts"; } }
 
     [MenuItem("Hotfix/Puerts/Generate Code", false, 1)]
     public static void GenerateCode()

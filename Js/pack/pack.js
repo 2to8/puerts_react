@@ -3,11 +3,13 @@ const fs = require('fs');
 const path = require('path');
 const babel = require('@babel/core');
 const presetEnv = require('@babel/preset-env');
+const tsPreset = require('@babel/preset-typescript')
 
 const utils = require('./pack_utils');
 const config = require('./pack_config');
 
 const presetEnvPlugin = [presetEnv, config.presetEnvOption]
+const tsEnvPlugin = [tsPreset];
 
 const isDev = !utils.isArg('-build'); // 是否是开发环境打包
 const isNode = !utils.isArg('-nonode'); // 是否打包nodemodule
@@ -18,7 +20,7 @@ function getSourceMapRelativeCodePath(filename) {
     return path.relative(outputPath, inputPath);
 }
 function getSourceMapAbsPath(filename) {
-    return path.join(__dirname, config.outputPath, filename + ".map");
+    return getOutputCodeAbsPath(filename) + ".map";
 }
 function getInputCodeAbsPath(filename) {
     return path.join(__dirname, config.rootPath, filename);
@@ -34,8 +36,14 @@ function createAsset(filename) {
         console.log(filepath + " notfound");
         return;
     }
+    const ext = path.extname(filename);
+    let usePresets = [];
+    if (ext == ".ts" || ext == ".tsx") {
+        usePresets.push(tsEnvPlugin);
+    }
+    usePresets.push(presetEnvPlugin);
     let { code, map } = babel.transformFileSync(filepath, {
-        presets: [presetEnvPlugin],
+        presets: usePresets,
         sourceMaps: isDev,
         sourceRoot: '',
         // sourceFileName: path.basename(filename),
