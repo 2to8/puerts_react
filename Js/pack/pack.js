@@ -1,66 +1,20 @@
 // pack
 const fs = require('fs');
 const path = require('path');
-const babel = require('@babel/core');
-const presetEnv = require('@babel/preset-env');
-const tsPreset = require('@babel/preset-typescript');
-const reactPreset = require('@babel/preset-react');
 
 const utils = require('./pack_utils');
 const config = require('./pack_config');
 
-const presetEnvPlugin = [presetEnv, config.presetEnvOption]
-const tsEnvPlugin = [tsPreset];
-const reactEnvPlugin = [reactPreset];
-
 const isDev = !utils.isArg('-build'); // 是否是开发环境打包
 const isNode = !utils.isArg('-nonode'); // 是否打包nodemodule
 
-function getSourceMapRelativeCodePath(filename) {
-    let inputPath = getInputCodeAbsPath(filename);
-    let outputPath = path.dirname(getSourceMapAbsPath(filename));
-    return path.relative(outputPath, inputPath);
-}
-function getSourceMapAbsPath(filename) {
-    return getOutputCodeAbsPath(filename) + ".map";
-}
-function getInputCodeAbsPath(filename) {
-    return path.join(__dirname, config.rootPath, filename);
-}
-function getOutputCodeAbsPath(filename) {
-    let name = path.parse(filename).name;
-    return path.join(__dirname, config.outputPath, path.dirname(filename), name + '.js');
-}
+const tsconfig = require(path.join(config.rootPath, 'tsconfig.json'));
 
-function createAsset(filename) {
-    const filepath = getInputCodeAbsPath(filename);
-    if (!fs.existsSync(filepath)) {
-        console.log(filepath + " notfound");
-        return;
-    }
-    // const ext = path.extname(filename);
-    let usePresets = [tsEnvPlugin, reactEnvPlugin, presetEnvPlugin];
-    let { code, map } = babel.transformFileSync(filepath, {
-        presets: usePresets,
-        sourceMaps: isDev,
-        sourceRoot: '',
-        // sourceFileName: path.basename(filename),
-        // plugins: []
-    });
-    if (isDev) {
-        const codePath = getSourceMapRelativeCodePath(filename).replace(/\\/g, "/");
-        map.sources = [codePath];
-        map.file = path.basename(getOutputCodeAbsPath(filename)).replace(/\\/g, "/");
-        code += "\n" + "//# sourceMappingURL=" + path.basename(getSourceMapAbsPath(filename));
-    }
-    return { filename, code, map };
-}
+const inputPath = path.join(__dirname, config.rootPath);
+const outputPath = path.join(__dirname, config.rootPath, tsconfig.compilerOptions.outDir); // 输出路径
 
-function createFile(filePath, content) {
-    const dir = path.dirname(filePath);
-    utils.createDir(dir);
-    fs.writeFileSync(filePath, content);
-}
+// console.log(tsconfig);
+
 function copyFile(filePath, toPath) {
     const dir = path.dirname(toPath);
     utils.createDir(dir);
@@ -69,34 +23,27 @@ function copyFile(filePath, toPath) {
 
 // 打包
 function pack() {
-    console.log('\n------------ start generate code : ------------\n');
-    const outputFolder = path.join(__dirname, config.outputPath);
-    const inputFolder = path.join(__dirname, config.rootPath);
+    const codeExtension = ['.js', '.jsx', '.ts', '.tsx'];
+    const outputFolder = outputPath;
+    const inputFolder = inputPath;
     utils.clearDir(outputFolder, isNode ? null : ['node_modules']);
     utils.createDir(outputFolder);
-    let codeCount = 0;
-    let copyCount = 0;
-    utils.forEachDir(inputFolder, false, config.ignoreNames, file => {
+    console.log('\n------------ start tsc build : ------------\n');
+    utils.runCmd('tsc', path.join(inputFolder, 'node_modules/.bin'));
+    utils.forEachDir(inputFolder, false, tsconfig.exclude, file => {
+        if (file == 'tsconfig.json') return;
         let ext = path.extname(file);
-        if (config.codeExtension.indexOf(ext) >= 0) {
-            const asset = createAsset(file);
-            createFile(getOutputCodeAbsPath(asset.filename), asset.code);
-            if (isDev) {
-                createFile(getSourceMapAbsPath(asset.filename), JSON.stringify(asset.map));
-            }
-            codeCount++;
-        } else {
+        if (codeExtension.indexOf(ext) < 0) {
             copyFile(path.join(inputFolder, file), path.join(outputFolder, file));
-            copyCount++;
         }
     });
-    console.log('------------ generate code success !  code : ' + codeCount + ', copy : ' + copyCount + ' ------------\n');
+    console.log('\n------------ tsc build success ------------\n');
 
     if (isNode) {
         console.log('------------ start install npm dependent : ------------\n');
         // npm install --production
         utils.runCmd('npm install --production', outputFolder);
-        console.log('\n------------ install npm dependent success ! ------------\n');
+        console.log('------------ install npm dependent success ! ------------\n');
     }
 
     if (!isDev) {

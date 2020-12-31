@@ -85,16 +85,11 @@ utils.delDir = function (path) {
 utils.runCmd = function (cmd, path) {
     // console.log(path);
     let currentPath = __dirname;
-    shell.cd(path)
+    shell.cd(path);
+    console.log(cmd);
+    // let obj =
     shell.exec(cmd);
     shell.cd(currentPath);
-    // exec(cmd, { cmd: path }, (err, stdout, stderr) => {
-    //     if (err || stderr) {
-    //         callback(null, err ? err : stderr);
-    //     } else {
-    //         callback(stdout, null);
-    //     }
-    // });
 }
 
 
