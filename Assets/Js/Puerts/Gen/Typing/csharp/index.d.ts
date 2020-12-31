@@ -1126,5 +1126,7 @@ declare module 'csharp' {
         }
         
     }
-    
+    class JsEnvManager extends UnityEngine.MonoBehaviour {
+        public canvas: UnityEngine.GameObject;
+    }
 }

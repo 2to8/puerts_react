@@ -5,9 +5,12 @@
 using Puerts;
 using UnityEngine;
 
+public delegate void JsEnvInit(JsEnvManager monoBehaviour);
 public class JsEnvManager : MonoBehaviour
 {
+    public GameObject canvas;
     public string jsPath = "G:/Unity/Git/puerts_react/Js/build";
+    public string jsName = "main";
     private JsEnv jsEnv;
 #if START_DEBUG
     async
@@ -20,7 +23,8 @@ public class JsEnvManager : MonoBehaviour
         await jsEnv.WaitDebuggerAsync();
         Debug.Log("成功连接！");
 #endif
-        jsEnv.Eval(@"require('main')");
+        var init = jsEnv.Eval<JsEnvInit>(@"const main = require('"+ jsName + "'); main.init;");
+        if (init != null) init(this);
     }
     private void Update()
     {
